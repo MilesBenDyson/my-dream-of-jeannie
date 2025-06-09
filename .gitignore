@@ -1,7 +1,14 @@
+# IDE folders
+.idea/
 
+# Python virtual env
+.venv/
+venv/
+ENV/
+env/
+
+# __pycache__
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
-.DS_Store
