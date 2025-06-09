@@ -1,0 +1,7 @@
+
+PyQt5
+faiss-cpu
+transformers
+sentence-transformers
+gtts
+pygame
