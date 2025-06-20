@@ -215,3 +215,4 @@ if __name__ == '__main__':
     splash = SplashWindow()
     splash.show()
     sys.exit(app.exec_())
+#
