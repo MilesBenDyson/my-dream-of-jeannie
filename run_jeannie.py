@@ -16,13 +16,14 @@ class SplashWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('My Dream of Jeannie - Lade Rauch...')
-        self.setGeometry(100, 100, 500, 500)
+        self.setWindowFlags(Qt.FramelessWindowHint)  # kein Rand, keine Leiste
+        self.showFullScreen()  # Vollbild
 
         layout = QVBoxLayout()
 
         self.smoke_label = QLabel(self)
-        self.smoke_label.setFixedSize(800, 800)
+        screen_geometry = QDesktopWidget().screenGeometry()
+        self.smoke_label.setFixedSize(screen_geometry.width(), screen_geometry.height())
         self.movie = QMovie('jeannie/animations/smoke.gif')
         self.movie.setCacheMode(QMovie.CacheAll)
         self.movie.setScaledSize(self.smoke_label.size())
@@ -112,16 +113,11 @@ class JeannieWindow(QWidget):
         self.kugel_label.mousePressEvent = self.toggle_kristall
         layout.addWidget(self.kugel_label)
 
-        from PyQt5.QtWidgets import QScrollArea
+        from PyQt5.QtWidgets import QTextEdit
 
-        self.scroll_area = QScrollArea(self)
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setFixedHeight(150)
-
-        self.speech_label = QLabel("Jeannie: Hallo, Meister!")
-        self.speech_label.setAlignment(Qt.AlignTop)
-        self.speech_label.setWordWrap(True)
-        self.speech_label.setStyleSheet("""
+        self.speech_output = QTextEdit(self)
+        self.speech_output.setReadOnly(True)
+        self.speech_output.setStyleSheet("""
             background-color: #ffffff;
             border: 2px solid #ff69b4;
             border-radius: 10px;
@@ -130,9 +126,8 @@ class JeannieWindow(QWidget):
             font-size: 14px;
             color: #000000;
         """)
-
-        self.scroll_area.setWidget(self.speech_label)
-        layout.addWidget(self.scroll_area)
+        self.speech_output.setFixedHeight(150)
+        layout.addWidget(self.speech_output)
 
         self.input_field = QTextEdit(self)
         self.input_field.setFixedHeight(50)
@@ -150,23 +145,23 @@ class JeannieWindow(QWidget):
 
         self.setLayout(layout)
 
-        self.speech_label.setText("Jeannie: Hallo, Meister! Was kann ich für dich tun?")
+        self.speech_output.setPlainText("Jeannie: Hallo, Meister! Was kann ich für dich tun?")
         print("🧠 Jeannie ist bereit. Lokales Modell wird beim ersten Bedarf geladen.")
 
     def toggle_kristall(self, event):
         if self.kristall_status:
             self.kristall_status = False
             self.kugel_label.setPixmap(self.kugel_pixmap_off)
-            self.speech_label.setText("Jeannie: Ich ziehe mich zurück, Meister. Die Verbindung zum Universum ist getrennt.")
+            self.speech_output.setPlainText("Jeannie: Ich ziehe mich zurück, Meister. Die Verbindung zum Universum ist getrennt.")
         else:
             if self.check_internet():
                 self.kristall_status = True
                 self.kugel_label.setPixmap(self.kugel_pixmap_on)
-                self.speech_label.setText("Jeannie: Die Kristallkugel leuchtet, Meister. Ich bin mit dem Universum verbunden.")
+                self.speech_output.setPlainText("Jeannie: Die Kristallkugel leuchtet, Meister. Ich bin mit dem Universum verbunden.")
             else:
                 self.kristall_status = False
                 self.kugel_label.setPixmap(self.kugel_pixmap_off)
-                self.speech_label.setText("Jeannie: Oh nein Meister, die Kristallkugel kann gerade keine Verbindung mit dem Universum herstellen.")
+                self.speech_output.setPlainText("Jeannie: Oh nein Meister, die Kristallkugel kann gerade keine Verbindung mit dem Universum herstellen.")
 
     def check_internet(self):
         try:
@@ -190,18 +185,18 @@ class JeannieWindow(QWidget):
         if user_text.lower().startswith("recherchiere:"):
             frage = user_text.replace("recherchiere:", "").strip()
             antwort = self.scrape_urls_from_file(frage)
-            self.speech_label.setText(f"Jeannie: {antwort}")
+            self.speech_output.setPlainText(f"Jeannie: {antwort}")
             self.input_field.clear()
             return
 
         if user_text.lower().startswith("wiki:"):
             antwort = self.wiki_suche(user_text)
-            self.speech_label.setText(f"Jeannie: {antwort}")
+            self.speech_output.setPlainText(f"Jeannie: {antwort}")
             self.input_field.clear()
             return
 
         antwort = self.ask_local_model(user_text)
-        self.speech_label.setText(f"Jeannie: {antwort}")
+        self.speech_output.setPlainText(f"Jeannie: {antwort}")
         self.input_field.clear()
 
     def fade_in(self):
@@ -215,4 +210,3 @@ if __name__ == '__main__':
     splash = SplashWindow()
     splash.show()
     sys.exit(app.exec_())
-#
