@@ -1,5 +1,3 @@
-# IDE folders
-.idea/
 
 # Python virtual env
 .venv/
@@ -12,3 +10,23 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Bytecode- und Cache-Dateien
+__pycache__/
+*.pyc
+*.pyo
+
+# GPT4All / lokale KI-Modelle (riesige Dateien!)
+*.gguf
+/models/
+KI_models/
+
+
+
+# Betriebssystem-Spezifisch
+.DS_Store
+Thumbs.db
+
+# IDE-spezifisch (optional)
+.vscode/
+.idea/
